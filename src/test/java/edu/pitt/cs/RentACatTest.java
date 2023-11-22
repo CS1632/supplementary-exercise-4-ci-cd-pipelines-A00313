@@ -2,6 +2,8 @@ package edu.pitt.cs;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +31,7 @@ public class RentACatTest {
 	public void setUp() throws Exception {
 		// Turn on automatic bug injection in the Cat class, to emulate a buggy Cat.
 		// Your unit tests should work regardless of these bugs.
+		// Config.setBuggyRentACat(true);
 		Cat.bugInjectionOn = true;
 
 		// INITIALIZE THE TEST FIXTURE
@@ -36,13 +39,20 @@ public class RentACatTest {
 		r = RentACat.createInstance();
 
 		// 2. Create an unrented Cat with ID 1 and name "Jennyanydots", assign to c1
-		// TODO: Fill in
+		c1 = mock(Cat.class);
+		when(c1.getId()).thenReturn(1);
+        when(c1.getName()).thenReturn("Jennyanydots");
+        
 
 		// 3. Create an unrented Cat with ID 2 and name "Old Deuteronomy", assign to c2
-		// TODO: Fill in
+		c2 = mock(Cat.class);
+		when(c2.getId()).thenReturn(2);
+        when(c2.getName()).thenReturn("Old Deuteronomy");
 
 		// 4. Create an unrented Cat with ID 3 and name "Mistoffelees", assign to c3
-		// TODO: Fill in
+		c3 = mock(Cat.class);
+		when(c3.getId()).thenReturn(3);
+        when(c3.getName()).thenReturn("Mistoffelees");
 	}
 
 	@After
@@ -67,7 +77,7 @@ public class RentACatTest {
 
 	@Test
 	public void testGetCatNullNumCats0() {
-		// TODO
+		assertNull("Expected null for cat with ID 2, but got a non-null cat.", r.getCat(2));
 	}
 
 	/**
@@ -83,7 +93,17 @@ public class RentACatTest {
 
 	@Test
 	public void testGetCatNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+		when(c3.getId()).thenReturn(3);
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+
+        Cat cat = r.getCat(2);
+
+        assertNotNull(cat);
+        assertEquals("Expected getId() to return 2",2, cat.getId());
 	}
 
 	/**
@@ -98,7 +118,7 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableFalseNumCats0() {
-		// TODO
+		assertFalse("Expected false for cat with ID 2, but got true.", r.catAvailable(2));
 	}
 
 	/**
@@ -115,7 +135,19 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableTrueNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+        when(c3.getId()).thenReturn(3);
+		when(c1.getRented()).thenReturn(false);
+		when(c2.getRented()).thenReturn(false);
+		when(c3.getRented()).thenReturn(true);
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+
+        c3.rentCat();
+
+        assertTrue("Expected cat with id = 2 to be available", r.catAvailable(2));
 	}
 
 	/**
@@ -132,7 +164,18 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableFalseNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+        when(c3.getId()).thenReturn(3);
+		when(c1.getRented()).thenReturn(false);
+		when(c2.getRented()).thenReturn(true);
+		when(c3.getRented()).thenReturn(false);
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+        c2.rentCat();
+
+        assertFalse("Expected cat with id = 2 to not be available", r.catAvailable(2));
 	}
 
 	/**
@@ -147,7 +190,7 @@ public class RentACatTest {
 
 	@Test
 	public void testCatExistsFalseNumCats0() {
-		// TODO
+		assertFalse("Expected false for cat with ID 2, but got true.", r.catExists(2));
 	}
 
 	/**
@@ -162,7 +205,14 @@ public class RentACatTest {
 
 	@Test
 	public void testCatExistsTrueNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+        when(c3.getId()).thenReturn(3);
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+
+        assertTrue("Expected cat with id = 2 to exist", r.catExists(2));
 	}
 
 	/**
@@ -177,7 +227,7 @@ public class RentACatTest {
 
 	@Test
 	public void testListCatsNumCats0() {
-		// TODO
+		assertEquals("Expected an empty string for listing cats, but got a non-empty string.", "", r.listCats());
 	}
 
 	/**
@@ -193,7 +243,20 @@ public class RentACatTest {
 
 	@Test
 	public void testListCatsNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+        when(c3.getId()).thenReturn(3);
+        when(c1.getName()).thenReturn("Jennyanydots");
+        when(c2.getName()).thenReturn("Old Deuteronomy");
+        when(c3.getName()).thenReturn("Mistoffelees");
+
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+
+        String expected = "ID 1. Jennyanydots\nID 2. Old Deuteronomy\nID 3. Mistoffelees\n";
+		String output = r.listCats();
+        assertEquals("output does not equal:\n" + expected, expected, output);
 	}
 
 	/**
@@ -208,7 +271,7 @@ public class RentACatTest {
 
 	@Test
 	public void testRentCatFailureNumCats0() {
-		// TODO
+		assertFalse("Expected false for renting cat with ID 2, but got true.", r.rentCat(2));
 	}
 
 	/**
@@ -229,7 +292,15 @@ public class RentACatTest {
 
 	@Test
 	public void testRentCatFailureNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+        when(c3.getId()).thenReturn(3);
+		when(c2.getRented()).thenReturn(true);
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+
+        assertFalse("Expected a return of false for rentCat for cat with id=2", r.rentCat(2));
 	}
 
 	/**
@@ -244,7 +315,7 @@ public class RentACatTest {
 
 	@Test
 	public void testReturnCatFailureNumCats0() {
-		// TODO
+		assertFalse("Expected false for returning cat with ID 2, but got true.", r.returnCat(2));
 	}
 
 	/**
@@ -266,6 +337,19 @@ public class RentACatTest {
 
 	@Test
 	public void testReturnCatNumCats3() {
-		// TODO
+		when(c1.getId()).thenReturn(1);
+        when(c2.getId()).thenReturn(2);
+        when(c3.getId()).thenReturn(3);
+
+		when(c2.getRented()).thenReturn(true);
+		Mockito.verify(c2, Mockito.times(1)).returnCat();
+		Mockito.verify(c1, Mockito.times(0)).returnCat();
+		Mockito.verify(c2, Mockito.times(0)).returnCat();
+        r.addCat(c1);
+        r.addCat(c2);
+        r.addCat(c3);
+  
+
+        assertTrue("Expected a return true for reutrnCat for cat with id = 2", r.returnCat(2));
 	}
 }
