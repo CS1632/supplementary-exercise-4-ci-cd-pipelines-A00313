@@ -93,14 +93,15 @@ public class RentACatTest {
 
 	@Test
 	public void testGetCatNumCats3() {
-		when(c1.getId()).thenReturn(1);
-        when(c2.getId()).thenReturn(2);
-		when(c3.getId()).thenReturn(3);
+		// when(c1.getId()).thenReturn(1);
+        // when(c2.getId()).thenReturn(2);
+		// when(c3.getId()).thenReturn(3);
         r.addCat(c1);
         r.addCat(c2);
         r.addCat(c3);
 
         Cat cat = r.getCat(2);
+		// cat.returnCat();
 
         assertNotNull(cat);
         assertEquals("Expected getId() to return 2",2, cat.getId());
@@ -340,16 +341,18 @@ public class RentACatTest {
 		when(c1.getId()).thenReturn(1);
         when(c2.getId()).thenReturn(2);
         when(c3.getId()).thenReturn(3);
-
 		when(c2.getRented()).thenReturn(true);
-		Mockito.verify(c2, Mockito.times(1)).returnCat();
-		Mockito.verify(c1, Mockito.times(0)).returnCat();
-		Mockito.verify(c2, Mockito.times(0)).returnCat();
+
         r.addCat(c1);
         r.addCat(c2);
         r.addCat(c3);
-  
 
         assertTrue("Expected a return true for reutrnCat for cat with id = 2", r.returnCat(2));
+
+		Mockito.verify(c2, Mockito.times(1)).returnCat();
+		Mockito.verify(c1, Mockito.times(0)).returnCat();
+		Mockito.verify(c3, Mockito.times(0)).returnCat();
+
+
 	}
 }
